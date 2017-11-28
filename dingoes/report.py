@@ -2,6 +2,7 @@ import csv
 import re
 from etaprogress.progress import ProgressBar
 from dateutil.parser import parse
+from netaddr import *
 from dingoes.resolver import DnsResolver
 
 class Report(object):
