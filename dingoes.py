@@ -72,15 +72,8 @@ def main():
         print("\nProcessing {} entries, this may take a while:\n".format(args.n))
         statistics = report.write_results(args.n)
         output_file.close()
-        # Generate some basic statistics
-        print("\n\nBLOCKED SITES (Total: {})".format(args.n))
-        print("===========================")
-        for resolver in sorted(statistics.keys()):
-            blocked_num = statistics[resolver]
-            blocked_rate = round(statistics[resolver] / args.n * 100, 1)
-            print("{}: {} ({}%)".format(resolver, blocked_num, blocked_rate))
-        print("\nDetailed report: {}\n".format(args.o))
-        print("Great success.\n")
+        print("\nGreat success.\n")
+        print("Report is available in {}\n".format(args.o))
     except Exception as e:
         print("Error: {}".format(e))
         exit(1)

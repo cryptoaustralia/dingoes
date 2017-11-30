@@ -70,7 +70,6 @@ class Report(object):
 
     def write_results(self, entries_to_process):
         '''Write results into CSV file'''
-        statistics = {}
         counter = 1
         # Create progress bar
         bar = ProgressBar(entries_to_process, max_width=72)
@@ -89,7 +88,6 @@ class Report(object):
             result['Phishing Site IP Address'] = re.findall(r'[0-9]+(?:\.[0-9]+){3}', feed_entry.summary)[0]
             # Iterate through the third-party DNS services
             for resolver_name in self.resolver_names:
-                statistics[resolver_name] = 0
                 try:
                     dns_resolver = self.resolvers[resolver_name]['resolvers'][0]
                     phishing_domain = result['Phishing Site Domain']
@@ -102,10 +100,7 @@ class Report(object):
                 else:
                     blockpages = self.resolvers[resolver_name]['blockpages']
                     result[resolver_name] = self.generate_result(ip_addresses, blockpages)
-                    # Write stats to dict
-                    if result[resolver_name] == 'SITE_BLOCKED_OK':
-                        statistics[resolver_name] += 1
             self.csv_writer.writerow(result)
             self.output_file.flush()
             counter += 1
-        return statistics
+        return counter
