@@ -31,7 +31,7 @@ def get_args():
 
     """
     epoch_time = int(time.time())
-    report_filename = 'results' + "_" + time.strftime("%Y-%m-%d_%H%M") + '_' + str(epoch_time) + ".csv"
+    report_filename = "report_{}_{}.csv".format(time.strftime("%Y-%m-%d_%H%M"), epoch_time)
     parser = argparse.ArgumentParser(
         description='Compare DNS server responses.',formatter_class=argparse.MetavarTypeHelpFormatter)
     parser.add_argument('-o', type=str, default=report_filename, help='Report file name')
@@ -61,13 +61,14 @@ def main():
         print("\n\nError retrieving hpHosts feed: {}\n".format(e))
         exit(1)
     # Create object and load in the retrieved values from above
-    report = Report(hphosts_feed, args.o, config)
+    report_filename = "hpHosts-{}-{}".format(args.c, args.o)
+    report = Report(hphosts_feed, report_filename, config)
     # Process results
     try:
         print("\nProcessing {} entries, this may take a while:\n".format(args.n))
         report.write_results(args.n)
         print("\nGreat success.\n")
-        print("Report is available in {}\n".format(args.o))
+        print("Report is available in {}\n".format(report_filename))
     except Exception as e:
         print("Error: {}".format(e))
         exit(1)
