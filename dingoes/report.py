@@ -4,6 +4,9 @@ from etaprogress.progress import ProgressBar
 from dateutil.parser import parse
 from netaddr import *
 from dingoes.resolver import DnsResolver
+from ascii_graph import Pyasciigraph
+from ascii_graph.colors import *
+from ascii_graph.colordata import vcolor
 
 class Report(object):
     '''Report class'''
@@ -128,11 +131,13 @@ class Report(object):
             for item in self.resolver_names:
                 self.statistics[item] = 0
 
-    def print_stats(self, total_entries):
-        stats = "Blocking Statistics:\n=======================\n"
+    def print_stats_diagram(self, total_entries):
+        data = []
+        graph = Pyasciigraph(separator_length=4)
         for resolver_name in sorted(self.resolver_names):
-            absolute = self.statistics[resolver_name]
-            rate = round((self.statistics[resolver_name] / total_entries) * 100, 2)
-            stats += "{}: {} ({}%) blocked\n".format(resolver_name, absolute, rate)
-        stats += "\nTOTAL INSPECTED: {}\n".format(total_entries)
-        return stats
+            item = (resolver_name, self.statistics[resolver_name])
+            data.append(item)
+        item = ('TOTAL', total_entries)
+        data.append(item)
+        for line in graph.graph('Blocking Statistics:', data):
+            print(line)

@@ -67,9 +67,9 @@ def main():
     print("\nProcessing {} entries, this may take a while:\n".format(args.n))
     report.write_results(args.n)
     print("\nGreat success.\n")
-    stats = report.print_stats(args.n)
-    print(stats)
-    print("Detailed report is available in {}\n".format(report_filename))
+    # Plot stats histogram
+    report.print_stats_diagram(args.n)
+    print("\nDetailed report is available in {}\n".format(report_filename))
 
 def signal_handler(signal, frame):
     print('\n\nYou pressed Ctrl+C!\n')
