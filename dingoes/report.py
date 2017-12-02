@@ -91,9 +91,9 @@ class Report(object):
             # Iterate through the third-party DNS services
             for resolver_name in self.resolver_names:
                 try:
-                    dns_resolver = self.resolvers[resolver_name]['resolvers'][0]
+                    dns_resolvers = self.resolvers[resolver_name]['resolvers']
                     phishing_domain = result['Phishing Site Domain']
-                    resolver = DnsResolver(dns_resolver)
+                    resolver = DnsResolver(dns_resolvers)
                     # Retrieve the IP addresses that the third-party DNS service resolves
                     ip_addresses = resolver.get_ip_address(phishing_domain)
                 except Exception as e:

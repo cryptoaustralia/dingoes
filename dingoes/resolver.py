@@ -2,9 +2,9 @@ import dns.resolver
 from netaddr import *
 
 class DnsResolver(object):
-    def __init__(self, dns_resolver = '8.8.8.8'):
+    def __init__(self, dns_resolvers = ['8.8.8.8', '8.8.4.4']):
         self.dns_query_timeout = 10.0
-        self.dns_resolver = dns_resolver
+        self.dns_resolvers = dns_resolvers
         self.my_resolver = False
         self.main()
 
@@ -13,7 +13,7 @@ class DnsResolver(object):
         self.my_resolver.timeout = self.dns_query_timeout
         self.my_resolver.lifetime = self.dns_query_timeout
         self.my_resolver.retry_servfail = True
-        self.my_resolver.nameservers = [self.dns_resolver]
+        self.my_resolver.nameservers = self.dns_resolvers
 
     def get_ip_address(self, domain):
         """Resolve domain name into IP address
