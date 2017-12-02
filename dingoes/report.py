@@ -42,7 +42,7 @@ class Report(object):
         else:
             return False
 
-    def generate_result(self, ip_addresses, blockpages):
+    def generate_result(self, ip_addresses, blockpages, resolver_name):
         """
         Generates cell content in the CSV file
         """
@@ -51,6 +51,7 @@ class Report(object):
         # one of the block pages of the DNS services.
         if self.is_blocked(ip_addresses, blockpages):
             result = 'SITE_BLOCKED_OK'
+            self.add_to_stats(resolver_name)
         # If the website is not blocked, return with the website's IP address
         else:
             results = []
@@ -109,7 +110,7 @@ class Report(object):
                     result[resolver_name] = e
                 else:
                     blockpages = self.resolvers[resolver_name]['blockpages']
-                    result[resolver_name] = self.generate_result(ip_addresses, blockpages)
+                    result[resolver_name] = self.generate_result(ip_addresses, blockpages, resolver_name)
             # Write results into file
             csv_writer.writerow(result)
             # Flush file after writing each line
@@ -118,3 +119,20 @@ class Report(object):
         # Close output file
         self.output_file_handler.close()
         return counter
+
+    def add_to_stats(self, resolver_name):
+        # If statistics variable is not initialised:
+        if len(self.statistics.keys()) > 0:
+            self.statistics[resolver_name] += 1
+        else:
+            for item in self.resolver_names:
+                self.statistics[item] = 0
+
+    def print_stats(self, total_entries):
+        stats = "Blocking Statistics:\n=======================\n"
+        for resolver_name in sorted(self.resolver_names):
+            absolute = self.statistics[resolver_name]
+            rate = round((self.statistics[resolver_name] / total_entries) * 100, 2)
+            stats += "{}: {} ({}%) blocked\n".format(resolver_name, absolute, rate)
+        stats += "\nTOTAL INSPECTED: {}\n".format(total_entries)
+        return stats

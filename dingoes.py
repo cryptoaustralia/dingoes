@@ -64,14 +64,12 @@ def main():
     report_filename = "hpHosts-{}-{}".format(args.c, args.o)
     report = Report(hphosts_feed, report_filename, config)
     # Process results
-    try:
-        print("\nProcessing {} entries, this may take a while:\n".format(args.n))
-        report.write_results(args.n)
-        print("\nGreat success.\n")
-        print("Report is available in {}\n".format(report_filename))
-    except Exception as e:
-        print("Error: {}".format(e))
-        exit(1)
+    print("\nProcessing {} entries, this may take a while:\n".format(args.n))
+    report.write_results(args.n)
+    print("\nGreat success.\n")
+    stats = report.print_stats(args.n)
+    print(stats)
+    print("Detailed report is available in {}\n".format(report_filename))
 
 def signal_handler(signal, frame):
     print('\n\nYou pressed Ctrl+C!\n')
