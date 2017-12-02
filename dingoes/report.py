@@ -10,24 +10,13 @@ class Report(object):
     def __init__(self, hphosts_feed, output_file, config):
         self.hphosts_feed = hphosts_feed
         self.output_file = output_file
+        self.output_file_handler = False
         self.config = config
         self.resolver = DnsResolver()
         self.csv_writer = False
         self.resolvers = config.confvalues
         self.resolver_names = config.confvalues.keys()
-        self.main()
-
-    def main(self):
-        '''Open CSV file and add header'''
-        csv_header_fieldnames = [
-            'Added to hpHosts',
-            'Phishing Site Domain',
-            'Phishing Site IP Address'
-        ]
-        csv_header_fieldnames.extend(self.resolver_names)
-        csv_writer = csv.DictWriter(self.output_file, delimiter=',', fieldnames=csv_header_fieldnames)
-        csv_writer.writeheader()
-        self.csv_writer = csv_writer
+        self.statistics = {}
 
     def is_blocked(self, ip_addresses, blockpages):
         '''Verifies whether the IP address is on the blocked page list'''
@@ -70,11 +59,30 @@ class Report(object):
             result = "\n".join(results)
         return result
 
+    def open_csv_file(self):
+        '''Open CSV file and add header'''
+        try:
+            self.output_file_handler = open(self.output_file, 'w')
+        except Exception as e:
+            print("\n\nError opening output file {}: {}\n".format(args.o, e))
+            exit(1)
+        csv_header_fieldnames = [
+            'Added to hpHosts',
+            'Phishing Site Domain',
+            'Phishing Site IP Address'
+        ]
+        csv_header_fieldnames.extend(self.resolver_names)
+        csv_writer = csv.DictWriter(self.output_file_handler, delimiter=',', fieldnames=csv_header_fieldnames)
+        csv_writer.writeheader()
+        return csv_writer
+
     def write_results(self, entries_to_process):
         '''Write results into CSV file'''
         counter = 1
         # Create progress bar
         bar = ProgressBar(entries_to_process, max_width=72)
+        # Write CSV header
+        csv_writer = self.open_csv_file()
         # Iter through each feed entry from the hpHosts feed
         for feed_entry in self.hphosts_feed.entries:
             # Stop processing if the number of entries are higher than in '-n'
@@ -102,7 +110,11 @@ class Report(object):
                 else:
                     blockpages = self.resolvers[resolver_name]['blockpages']
                     result[resolver_name] = self.generate_result(ip_addresses, blockpages)
-            self.csv_writer.writerow(result)
-            self.output_file.flush()
+            # Write results into file
+            csv_writer.writerow(result)
+            # Flush file after writing each line
+            self.output_file_handler.flush()
             counter += 1
+        # Close output file
+        self.output_file_handler.close()
         return counter

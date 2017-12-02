@@ -60,18 +60,12 @@ def main():
         spinner.fail()
         print("\n\nError retrieving hpHosts feed: {}\n".format(e))
         exit(1)
-    try:
-        output_file = open(args.o, 'w')
-    except Exception as e:
-        print("\n\nError opening output file {}: {}\n".format(args.o, e))
-        exit(1)
     # Create object and load in the retrieved values from above
-    report = Report(hphosts_feed, output_file, config)
+    report = Report(hphosts_feed, args.o, config)
     # Process results
     try:
         print("\nProcessing {} entries, this may take a while:\n".format(args.n))
-        statistics = report.write_results(args.n)
-        output_file.close()
+        report.write_results(args.n)
         print("\nGreat success.\n")
         print("Report is available in {}\n".format(args.o))
     except Exception as e:
