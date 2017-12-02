@@ -42,7 +42,9 @@ class Report(object):
                 return False
             # If Google responds with a valid DNS response, blocking is successful
             else:
-                return ip_addresses
+                # Return NXDOMAIN instead of 255.255.255.255 representing it
+                response = 'NXDOMAIN'
+                return response
         elif len(intersection) > 0:
             # If the IP address is in the list of IP addresses of block pages
             # the website is blocked successfully

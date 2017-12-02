@@ -12,6 +12,7 @@ class DnsResolver(object):
         self.my_resolver = dns.resolver.Resolver()
         self.my_resolver.timeout = self.dns_query_timeout
         self.my_resolver.lifetime = self.dns_query_timeout
+        self.my_resolver.retry_servfail = True
         self.my_resolver.nameservers = [self.dns_resolver]
 
     def get_ip_address(self, domain):
