@@ -75,7 +75,7 @@ class Report(object):
             'Phishing Site Domain',
             'Phishing Site IP Address'
         ]
-        csv_header_fieldnames.extend(self.resolver_names)
+        csv_header_fieldnames.extend(sorted(self.resolver_names))
         csv_writer = csv.DictWriter(self.output_file_handler, delimiter=',', fieldnames=csv_header_fieldnames)
         csv_writer.writeheader()
         return csv_writer
