@@ -15,28 +15,39 @@ class Report(object):
         self.output_file = output_file
         self.output_file_handler = False
         self.config = config
-        self.resolver = DnsResolver()
+        self.resolver = DnsResolver(retry_servfail=True)
         self.csv_writer = False
         self.resolvers = config.confvalues
         self.resolver_names = config.confvalues.keys()
         self.statistics = {}
+        # Initialise stats dict
+        for item in self.resolver_names:
+            self.statistics[item] = 0
 
-    def is_blocked(self, ip_addresses, blockpages):
+    def is_blocked(self, ip_addresses, blockpages, phishing_domain):
         '''Verifies whether the IP address is on the blocked page list'''
         # TODO: blockpages should be generated from self.config
         intersection = ip_addresses & blockpages
-        # If response was NXDOMAIN, we need to verify if non-filtering servers respond
+        # If response was NXDOMAIN, we need to verify if a non-filtering server respond with NXDOMAIN too
+        # e.g. the domain is taken down
         if IPAddress('255.255.255.255') in ip_addresses:
             try:
-                ip_addresses = self.resolver.get_ip_address(domain)
-            # If response is NXDOMAIN or any other error, return False
+                # Get the IP address from Google DNS
+                google_dns_response = self.resolver.get_ip_address(phishing_domain)
+                nx_intersection = ip_addresses & google_dns_response
+                # If Google DNS and the DNS server responds with different results, the
+                # blocking was unsuccessful
+                if len(nx_intersection) == 0:
+                    response = 'NXDOMAIN'
+                    return response
+                # If Google DNS and the DNS server under inspection responds with the same IP addresses
+                # the block is unsuccessful
+                else:
+                    return False
+            # If response is NXDOMAIN from Google DNS, or any other error, return False
+            # which means we could not determine whether the site was blocked or not
             except:
                 return False
-            # If Google responds with a valid DNS response, blocking is successful
-            else:
-                # Return NXDOMAIN instead of 255.255.255.255 representing it
-                response = 'NXDOMAIN'
-                return response
         elif len(intersection) > 0:
             # If the IP address is in the list of IP addresses of block pages
             # the website is blocked successfully
@@ -45,14 +56,14 @@ class Report(object):
         else:
             return False
 
-    def generate_result(self, ip_addresses, blockpages, resolver_name):
+    def generate_result(self, ip_addresses, blockpages, resolver_name, phishing_domain):
         """
         Generates cell content in the CSV file
         """
         result = False
         # Return 'SITE_BLOCKED_OK' if the phishing site's domain name resolves to
         # one of the block pages of the DNS services.
-        if self.is_blocked(ip_addresses, blockpages):
+        if self.is_blocked(ip_addresses, blockpages, phishing_domain):
             result = 'SITE_BLOCKED_OK'
             self.add_to_stats(resolver_name)
         # If the website is not blocked, return with the website's IP address
@@ -113,7 +124,7 @@ class Report(object):
                     result[resolver_name] = e
                 else:
                     blockpages = self.resolvers[resolver_name]['blockpages']
-                    result[resolver_name] = self.generate_result(ip_addresses, blockpages, resolver_name)
+                    result[resolver_name] = self.generate_result(ip_addresses, blockpages, resolver_name, phishing_domain)
             # Write results into file
             csv_writer.writerow(result)
             # Flush file after writing each line
@@ -124,12 +135,7 @@ class Report(object):
         return counter
 
     def add_to_stats(self, resolver_name):
-        # If statistics variable is not initialised:
-        if len(self.statistics.keys()) > 0:
-            self.statistics[resolver_name] += 1
-        else:
-            for item in self.resolver_names:
-                self.statistics[item] = 0
+        self.statistics[resolver_name] += 1
 
     def print_stats_diagram(self, total_entries):
         data = []
