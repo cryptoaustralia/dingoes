@@ -116,7 +116,7 @@ class Report(object):
                 try:
                     dns_resolvers = self.resolvers[resolver_name]['resolvers']
                     phishing_domain = result['Phishing Site Domain']
-                    resolver = DnsResolver(dns_resolvers)
+                    resolver = DnsResolver(dns_resolvers, single_resolver=True)
                     # Retrieve the IP addresses that the third-party DNS service resolves
                     ip_addresses = resolver.get_ip_address(phishing_domain)
                 except Exception as e:
