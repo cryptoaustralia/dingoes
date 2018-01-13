@@ -35,7 +35,7 @@ services.
 
   * Run DiNgoeS with the following command:
 
-      `$ python dyngoes.py`
+      `$ python dingoes.py`
 
   The CSV format report will be available in the same directory. Open in Excel
   or similar for further processing.
