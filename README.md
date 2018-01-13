@@ -7,6 +7,8 @@ from [hpHosts](https://hosts-file.net/) and looks up whether these websites are
 blocked on popular third-party malware-blocking and anti-phishing DNS
 services.
 
+Read the full blog article and see the initial report on the [CryptoAUSTRALIA Blog](https://blog.cryptoaustralia.org.au/2017/12/23/best-threat-blocking-dns-providers/)
+
 ## DNS Services Supported
 
   * [Comodo Secure DNS](https://www.comodo.com/secure-dns/)
