@@ -28,7 +28,7 @@ Read the full blog article and see the initial report on the [CryptoAUSTRALIA Bl
   * **EXP** : Sites engaged in hosting, development or distribution of exploits
 
 ## Install
-
+  * Require python3
   * Install requirements with `pip`:
 
       `$ pip install -r requirements.txt`
@@ -46,7 +46,8 @@ Read the full blog article and see the initial report on the [CryptoAUSTRALIA Bl
 
   * `-o` : CSV report file name
   * `-c` : hpHosts feed: `PSH` (default), `EMD` or `EXP`
-  * `-n` : Number of websites from the hpHosts feed to test (default: 500)
+  * `-n` : Number of websites from the hpHosts feed to test (default: 500)a
+  * `-s` : Shell type - if spinner exceptions occur, set to 1 (default: 0)
 
 ## Support
 
