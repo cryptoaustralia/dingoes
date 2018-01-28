@@ -46,7 +46,7 @@ Read the full blog article and see the initial report on the [CryptoAUSTRALIA Bl
 
   * `-o` : CSV report file name
   * `-c` : hpHosts feed: `PSH` (default), `EMD` or `EXP`
-  * `-n` : Number of websites from the hpHosts feed to test (default: 500)a
+  * `-n` : Number of websites from the hpHosts feed to test (default: 500)
   * `-s` : Shell type - if spinner exceptions occur, set to 1 (default: 0)
 
 ## Support
