@@ -37,27 +37,35 @@ def get_args():
     parser.add_argument('-o', type=str, default=report_filename, help='Report file name')
     parser.add_argument('-c', type=str, help='hpHosts feed (Default: PSH)', choices=['PSH', 'EMD', 'EXP'], default='PSH')
     parser.add_argument('-n', type=int, help='Number of hishing sites to test (Default: 500)', default=500)
+    parser.add_argument('-s', type=int, help='Shell type: set to 1 if spinner errors occur (default: 0)', default=0)
     args = parser.parse_args()
     return args
 
 def main():
     print_banner()
     args = get_args()
-    spinner = Halo(spinner='dots')
+    if( args.s == 0 ):
+        spinner = Halo(spinner='dots')
     try:
-        spinner.start(text='Parsing configuration file')
+        if (args.s == 0):
+           spinner.start(text='Parsing configuration file')
         config = ConfParse()
-        spinner.succeed()
+        if (args.s == 0):
+            spinner.succeed()
     except Exception as e:
-        spinner.fail()
+        if(args.s == 0):
+            spinner.fail()
         print("\n\nError parsing configuration file: {}\n".format(e))
         exit(1)
     try:
-        spinner.start(text="Retrieving hpHosts feed: {}".format(args.c))
+        if(args.s == 0):
+            spinner.start(text="Retrieving hpHosts feed: {}".format(args.c))
         hphosts_feed = HpHostsFeed(args.c)
-        spinner.succeed()
+        if(args.s == 0):
+            spinner.succeed()
     except Exception as e:
-        spinner.fail()
+        if(args.s == 0):
+            spinner.fail()
         print("\n\nError retrieving hpHosts feed: {}\n".format(e))
         exit(1)
     # Create object and load in the retrieved values from above
@@ -68,7 +76,8 @@ def main():
     report.write_results(args.n)
     print("\nGreat success.\n")
     # Plot stats histogram
-    report.print_stats_diagram(args.n)
+    if(args.s==0):
+        report.print_stats_diagram(args.n)
     print("\nDetailed report is available in {}\n".format(report_filename))
 
 def signal_handler(signal, frame):
