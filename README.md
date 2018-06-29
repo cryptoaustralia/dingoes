@@ -20,6 +20,7 @@ Read the full blog article and see the initial report on the [CryptoAUSTRALIA Bl
   * [SafeDNS](https://www.safedns.com/)
   * [Strongarm](https://strongarm.io/)
   * [Yandex.DNS](https://dns.yandex.com/advanced/)
+  * [CleanBrowsing](https://cleanbrowsing.org/)
 
 ## hpHosts Feeds Supported
 
